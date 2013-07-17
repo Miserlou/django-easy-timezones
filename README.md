@@ -12,28 +12,28 @@ Quick start
 
 1. Add "easy-timezones" to your INSTALLED_APPS setting like this::
 
-      INSTALLED_APPS = (
-          ...
-          'easy-timezones',
-      )
+    > INSTALLED_APPS = (
+    >   ...
+    >   'easy-timezones',
+    > )
 
 2. Add EasyTimezoneMiddleware to your MIDDLEWARE_CLASSES 
 
-    MIDDLEWARE_CLASSES = (
-        ...
-        'easy-timezones.middleware.EasyTimezoneMiddleware',
-    )
+    > MIDDLEWARE_CLASSES = (
+    >   ...
+    >   'easy-timezones.middleware.EasyTimezoneMiddleware',
+    > )
 
 3. Add a path to the [MaxMind GeoIP database](http://www.maxmind.com/en/geolocation_landing) in your settings file:
 
-    GEOIP_DATABASE = '/path/to/your/geopip/database/GeoIP.dat'
+    > GEOIP_DATABASE = '/path/to/your/geopip/database/GeoIP.dat'
 
 4. Enable localtime in your templates.
 
-    {% load tz %}
-        The UTC time is {{ object.date }}
-    {% localtime on %}
-        The local time is {{ object.date }}
-    {% endlocaltime %}
+    > {% load tz %}
+    >     The UTC time is {{ object.date }}
+    > {% localtime on %}
+    >     The local time is {{ object.date }}
+    > {% endlocaltime %}
 
 5. Twist one up, cause you're done, homie!
