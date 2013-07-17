@@ -8,7 +8,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-easy-timezones',
-    version='0.1.1',
+    version='0.1.2',
     packages=['easy-timezones'],
     include_package_data=True,
     license='Apache License',  # example license
