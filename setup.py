@@ -15,7 +15,7 @@ setup(
         "pytz",
     ],
     include_package_data=True,
-    license='Apache License',  # example license
+    license='Apache License',
     description='Easy timezones for Django (>=1.4) based on MaxMind GeoIP.',
     long_description=README,
     url='https://github.com/Miserlou/django-easy-timezones',
