@@ -30,7 +30,8 @@ Quick start
     )
     ```
 
-3. Add a path to the [MaxMind GeoIP database](http://www.maxmind.com/en/geolocation_landing) in your settings file:
+3. Add a path to the [MaxMind GeoIP database](http://www.maxmind.com/en/geolocation_landing) ([direct
+link](http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz) because I'm nice) in your settings file:
 
     ```python
     GEOIP_DATABASE = '/path/to/your/geoip/database/GeoIP.dat'
