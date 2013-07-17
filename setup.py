@@ -10,6 +10,10 @@ setup(
     name='django-easy-timezones',
     version='0.1.3',
     packages=['easy_timezones'],
+    install_requires=[
+        "pygeoip",
+        "pytz",
+    ],
     include_package_data=True,
     license='Apache License',  # example license
     description='Easy timezones for Django (>=1.4) based on MaxMind GeoIP.',
