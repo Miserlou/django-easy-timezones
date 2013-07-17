@@ -17,7 +17,7 @@ Quick start
     ```python
     INSTALLED_APPS = (
       ...
-      'easy-timezones',
+      'easy_timezones',
     )
     ```
 
@@ -26,7 +26,7 @@ Quick start
     ```python
     MIDDLEWARE_CLASSES = (
       ...
-      'easy-timezones.middleware.EasyTimezoneMiddleware',
+      'easy_timezones.middleware.EasyTimezoneMiddleware',
     )
     ```
 

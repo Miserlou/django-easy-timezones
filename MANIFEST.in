@@ -1,2 +1,2 @@
 include README.md LICENSE
-recursive-include easy-timezones *.py
+recursive-include easy_timezones *.py
