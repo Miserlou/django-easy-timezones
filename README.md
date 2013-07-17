@@ -9,7 +9,7 @@ Quick start
 0. Install django-easy-timezones
 
     ```python
-    pip install django-easy-timezones
+    pip install django-easy-timezones pytz pygeoip
     ```
 
 1. Add "easy-timezones" to your INSTALLED_APPS setting like this:
