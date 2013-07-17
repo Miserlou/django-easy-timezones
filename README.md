@@ -30,14 +30,12 @@ Quick start
 
 4. Enable localtime in your templates.
 
-    > {% load tz %}
-
-    >     The UTC time is {{ object.date }}
-
-    > {% localtime on %}
-
-    >     The local time is {{ object.date }}
-
-    > {% endlocaltime %}
+    ```python
+    {% load tz %}
+        The UTC time is {{ object.date }}
+    {% localtime on %}
+        The local time is {{ object.date }}
+    {% endlocaltime %}
+    ```
 
 5. Twist one up, cause you're done, homie!
