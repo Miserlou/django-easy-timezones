@@ -1,3 +1,5 @@
+![Timezones. Yuck.](http://i.imgur.com/Qc2W47H.gif)
+
 django-easy-timezones
 =====================
 
