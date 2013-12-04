@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.utils import timezone
-
 import pygeoip
 
 
@@ -28,19 +27,19 @@ def get_client_ip(request):
 
 class EasyTimezoneMiddleware(object):
     def process_request(self, request):
-
         if not db_loaded:
             load_db()
 
         tz = request.session.get('django_timezone')
 
         if not tz:
-            ip = get_client_ip(request)
-            if ip == '127.0.0.1':
-                # OpenWatch is the center of the universe.
-                ip = '192.81.131.111'
+            # use the default timezone (settings.TIME_ZONE) for localhost
+            tz = timezone.get_default_timezone()
 
-            tz = db.time_zone_by_addr(ip)
+            ip = get_client_ip(request)
+            if ip != '127.0.0.1':
+                # if not local, fetch the timezone from pygeoip
+                tz = db.time_zone_by_addr(ip)
 
         if tz:
             timezone.activate(tz)
