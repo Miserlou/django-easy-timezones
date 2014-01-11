@@ -32,11 +32,11 @@ Quick start
     )
     ```
 
-1. Add a path to the [MaxMind GeoIP database](http://www.maxmind.com/en/geolocation_landing) ([direct
-link](https://raw.github.com/Miserlou/django-easy-timezones/master/GeoIP.dat) because I'm nice) in your settings file:
+1. Add a path to the [MaxMind GeoIP cities database](http://dev.maxmind.com/geoip/legacy/geolite/) ([direct
+link](http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz) because I'm nice) in your settings file:
 
     ```python
-    GEOIP_DATABASE = '/path/to/your/geoip/database/GeoIP.dat'
+    GEOIP_DATABASE = '/path/to/your/geoip/database/GeoLiteCity.dat'
     ```
 
 1. Enable localtime in your templates.
@@ -48,7 +48,12 @@ link](https://raw.github.com/Miserlou/django-easy-timezones/master/GeoIP.dat) be
         The local time is {{ object.date }}
     {% endlocaltime %}
     ```
-    
+1. Twist one up, cause you're done, homie!
+
+## Signals
+
+You can also use signals to perform actions based on the timezone detection.
+
 1. To hook into the Timezone detection event to, say, save it to the request's user somewhere more permanent than a session, do something like this:
 
 	```python
@@ -60,5 +65,3 @@ link](https://raw.github.com/Miserlou/django-easy-timezones/master/GeoIP.dat) be
         	instance.timezone = timezone
         	instance.save()
 	```
-
-1. Twist one up, cause you're done, homie!
