@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 import pytz
 import pygeoip
+
+from .signals import detected_timezone
 
 db_loaded = False
 db = None
@@ -38,5 +41,6 @@ class EasyTimezoneMiddleware(object):
 
         if tz:
             timezone.activate(tz)
+            detected_timezone.send(sender=get_user_model(), instance=request.user, timezone=tz)
         else:
             timezone.deactivate()

@@ -8,7 +8,7 @@ Easy timezones for Django (>=1.4) based on MaxMind GeoIP.
 Quick start
 -----------
 
-0. Install django-easy-timezones
+1. Install django-easy-timezones
 
     ```python
     pip install django-easy-timezones
@@ -23,7 +23,7 @@ Quick start
     )
     ```
 
-2. Add EasyTimezoneMiddleware to your MIDDLEWARE_CLASSES 
+1. Add EasyTimezoneMiddleware to your MIDDLEWARE_CLASSES 
 
     ```python
     MIDDLEWARE_CLASSES = (
@@ -32,14 +32,14 @@ Quick start
     )
     ```
 
-3. Add a path to the [MaxMind GeoIP database](http://www.maxmind.com/en/geolocation_landing) ([direct
+1. Add a path to the [MaxMind GeoIP database](http://www.maxmind.com/en/geolocation_landing) ([direct
 link](https://raw.github.com/Miserlou/django-easy-timezones/master/GeoIP.dat) because I'm nice) in your settings file:
 
     ```python
     GEOIP_DATABASE = '/path/to/your/geoip/database/GeoIP.dat'
     ```
 
-4. Enable localtime in your templates.
+1. Enable localtime in your templates.
 
     ```python
     {% load tz %}
@@ -48,5 +48,17 @@ link](https://raw.github.com/Miserlou/django-easy-timezones/master/GeoIP.dat) be
         The local time is {{ object.date }}
     {% endlocaltime %}
     ```
+    
+1. To hook into the Timezone detection event to, say, save it to the request's user somewhere more permanent than a session, do something like this:
 
-5. Twist one up, cause you're done, homie!
+	```python
+	from easy_timezones.signals import detected_timezone	
+
+	@receiver(detected_timezone, sender=MyUserModel)
+	def process_timezone(sender, instance, timezone, **kwargs):
+    	if instance.timezone != timezone:
+        	instance.timezone = timezone
+        	instance.save()
+	```
+
+1. Twist one up, cause you're done, homie!
