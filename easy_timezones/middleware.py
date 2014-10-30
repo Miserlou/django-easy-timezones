@@ -9,27 +9,30 @@ from .signals import detected_timezone
 from .utils import get_ip_address_from_request
 
 
-GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', None)
+GEOIP_DATABASE_IPV4 = getattr(settings, 'GEOIP_DATABASE_IPV4', None)
+GEOIP_DATABASE_IPV6 = getattr(settings, 'GEOIP_DATABASE_IPV6', None)
 
-if not GEOIP_DATABASE:
+if not GEOIP_DATABASE_IPV4 or not GEOIP_DATABASE_IPV6:
     raise ImproperlyConfigured("GEOIP_DATABASE setting has not been defined.")
 
 
-db_loaded = False
-db = None
-
+db_ipv4_loaded = False
+db_ipv6_loaded = False
+db_ipv4 = None
+db_ipv6 = None
 
 def load_db():
-    global db
-    db = pygeoip.GeoIP(GEOIP_DATABASE, pygeoip.MEMORY_CACHE)
+    global db_ipv4, db_ipv6
+    db_ipv4 = pygeoip.GeoIP(GEOIP_DATABASE_IPV4, pygeoip.MEMORY_CACHE)
+    db_ipv6 = pygeoip.GeoIP(GEOIP_DATABASE_IPV6, pygeoip.MEMORY_CACHE)
 
-    global db_loaded
-    db_loaded = True
+    global db_ipv4_loaded, db_ipv6_loaded
+    db_ipv4_loaded, db_ipv6_loaded = True, True
 
 
 class EasyTimezoneMiddleware(object):
     def process_request(self, request):
-        if not db_loaded:
+        if not db_ipv4_loaded or not db_ipv6_loaded:
             load_db()
 
         tz = request.session.get('django_timezone')
@@ -41,7 +44,9 @@ class EasyTimezoneMiddleware(object):
             ip = get_ip_address_from_request(request)
             if ip != '127.0.0.1':
                 # if not local, fetch the timezone from pygeoip
-                tz = db.time_zone_by_addr(ip)
+                tz = db_ipv4.time_zone_by_addr(ip)
+                if tz == None:
+                    tz = db_ipv6.time_zone_by_addr(ip)
 
         if tz:
             timezone.activate(tz)
