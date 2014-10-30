@@ -33,10 +33,11 @@ Quick start
     ```
 
 1. Add a path to the [MaxMind GeoIP cities database](http://dev.maxmind.com/geoip/legacy/geolite/) ([direct
-link](http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz) because I'm nice) in your settings file:
+link ipv4](http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz) because I'm nice) in your settings file:
 
     ```python
-    GEOIP_DATABASE = '/path/to/your/geoip/database/GeoLiteCity.dat'
+    GEOIP_DATABASE_IPV4 = '/path/to/your/geoip/database/GeoLiteCity.dat'
+    GEOIP_DATABASE_IPV6 = '/path/to/your/geoip/database/GeoLiteCityv6.dat'
     ```
 
 1. Enable localtime in your templates.

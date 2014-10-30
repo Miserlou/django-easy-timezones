@@ -9,7 +9,10 @@ def is_valid_ip(ip_address):
     try:
         socket.inet_aton(ip_address.strip())
     except:
-        valid = False
+        try:
+            socket.inet_pton(socket.AF_INET6, ip_address.strip())
+        except:
+            valid = False
     return valid
 
 
