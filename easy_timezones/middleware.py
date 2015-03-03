@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 import pytz
 import pygeoip
+import socket
 
 from .signals import detected_timezone
 from .utils import get_ip_address_from_request
@@ -40,8 +41,12 @@ class EasyTimezoneMiddleware(object):
 
             ip = get_ip_address_from_request(request)
             if ip != '127.0.0.1':
-                # if not local, fetch the timezone from pygeoip
-                tz = db.time_zone_by_addr(ip)
+                try:
+                    # if not local, fetch the timezone from pygeoip
+                    tz = db.time_zone_by_addr(ip)
+                except socket.error:
+                    # unable find the ip, just keep the default
+                    pass
 
         if tz:
             timezone.activate(tz)
