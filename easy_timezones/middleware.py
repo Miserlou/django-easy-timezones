@@ -5,6 +5,13 @@ import pytz
 import pygeoip
 
 from .signals import detected_timezone
+from .utils import get_ip_address_from_request
+
+GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', None)
+
+if not GEOIP_DATABASE:
+    raise ImproperlyConfigured("GEOIP_DATABASE setting has not been defined.")
+
 
 db_loaded = False
 db = None
@@ -15,15 +22,6 @@ def load_db():
 
     global db_loaded
     db_loaded = True
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-
-    return ip
 
 
 def is_valid_ip(ip):
@@ -44,7 +42,7 @@ class EasyTimezoneMiddleware(object):
             # use the default timezone (settings.TIME_ZONE) for localhost
             tz = timezone.get_default_timezone()
 
-            client_ip = get_client_ip(request)
+            client_ip = get_ip_address_from_request(request)
             ip_addrs = client_ip.split(',')
             for ip in ip_addrs:
                 if is_valid_ip(ip) and ip != '127.0.0.1':
