@@ -1,7 +1,8 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.shortcuts import render
 from django.db import models
-from django.test import TestCase
+from django.test import TestCase, Client
 
 import os
 
@@ -45,6 +46,22 @@ class TimezoneTests(TestCase):
         load_db()
         easy = EasyTimezoneMiddleware()
         easy.process_request(None)
+
+    def test_tags(self):
+
+        # UTC
+        client = Client()
+        response = client.get('/without_tz/')
+        self.assertEqual(response.status_code, 200)
+        without_s = response.content
+
+        # Europe/Moscow
+        client = Client(REMOTE_ADDR="93.180.5.26")
+        response = client.get('/with_tz/')
+        self.assertEqual(response.status_code, 200)
+        with_s = response.content
+
+        self.assertNotEqual(without_s, with_s)
 
     def test_valid_ips(self):
         # IPv4

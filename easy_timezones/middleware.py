@@ -35,6 +35,14 @@ def load_db():
 
 class EasyTimezoneMiddleware(object):
     def process_request(self, request):
+        """
+        If we can get a valid IP from the request,
+        look up that address in the database to get the appropriate timezone
+        and activate it.
+
+        Else, use the default.
+
+        """
 
         if not request:
             return
@@ -57,6 +65,7 @@ class EasyTimezoneMiddleware(object):
 
         if tz:
             timezone.activate(tz)
-            detected_timezone.send(sender=get_user_model(), instance=request.user, timezone=tz)
+            if getattr(settings, 'AUTH_USER_MODEL', None):
+                detected_timezone.send(sender=get_user_model(), instance=request.user, timezone=tz)
         else:
             timezone.deactivate()
