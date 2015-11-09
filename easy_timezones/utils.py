@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import ipaddress
 import socket
+import re
 
 
 def is_valid_ip(ip_address):
     """ Check Validity of an IP address """
-    valid = True
-    try:
-        socket.inet_aton(ip_address.strip())
-    except:
-        valid = False
-    return valid
 
+    try:
+        ip = ipaddress.ip_address(u'' + ip_address)
+        return True
+    except ValueError, e:
+        return False
 
 def get_ip_address_from_request(request):
     """ Makes the best attempt to get the client's real IP or return the loopback """

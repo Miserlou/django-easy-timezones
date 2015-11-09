@@ -3,7 +3,7 @@
 django-easy-timezones
 =====================
 
-Easy timezones for Django (>=1.4) based on MaxMind GeoIP.
+Easy timezones for Django (>=1.7) based on MaxMind GeoIP.
 
 Quick start
 -----------

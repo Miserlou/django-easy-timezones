@@ -1,4 +1,8 @@
 *.log
 *.pot
 *.pyc
+.coverage
+django_easy_timezones.egg-info/
+env/
+dist/
 local_settings.py
