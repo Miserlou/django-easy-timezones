@@ -7,10 +7,11 @@ import pygeoip
 import os
 
 from .signals import detected_timezone
-from .utils import get_ip_address_from_request, is_valid_ip
+from .utils import get_ip_address_from_request, is_valid_ip, is_local_ip
 
 db_loaded = False
 db = None
+db_v6 = None
 
 def load_db_settings():
     GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', 'GeoLiteCity.dat')
@@ -21,14 +22,27 @@ def load_db_settings():
     if not os.path.exists(GEOIP_DATABASE):
         raise ImproperlyConfigured("GEOIP_DATABASE setting is defined, but file does not exist.")
 
-    return GEOIP_DATABASE
+    GEOIPV6_DATABASE = getattr(settings, 'GEOIPV6_DATABASE', 'GeoLiteCityv6.dat')
+
+    if not GEOIPV6_DATABASE:
+        raise ImproperlyConfigured("GEOIPV6_DATABASE setting has not been properly defined.")
+
+    if not os.path.exists(GEOIPV6_DATABASE):
+        raise ImproperlyConfigured("GEOIPV6_DATABASE setting is defined, but file does not exist.")
+
+    return (GEOIP_DATABASE, GEOIPV6_DATABASE)
 
 load_db_settings()
 
 def load_db():
 
+    GEOIP_DATABASE, GEOIPV6_DATABASE = load_db_settings()
+
     global db
-    db = pygeoip.GeoIP(settings.GEOIP_DATABASE, pygeoip.MEMORY_CACHE)
+    db = pygeoip.GeoIP(GEOIP_DATABASE, pygeoip.MEMORY_CACHE)
+
+    global db_v6
+    db_v6 = pygeoip.GeoIP(GEOIPV6_DATABASE, pygeoip.MEMORY_CACHE)
 
     global db_loaded
     db_loaded = True
@@ -59,9 +73,13 @@ class EasyTimezoneMiddleware(object):
             client_ip = get_ip_address_from_request(request)
             ip_addrs = client_ip.split(',')
             for ip in ip_addrs:
-                if is_valid_ip(ip) and ip != '127.0.0.1':
-                    tz = db.time_zone_by_addr(ip)
-                    break
+                if is_valid_ip(ip) and not is_local_ip(ip):
+                    if ':' in ip:
+                        tz = db_v6.time_zone_by_addr(ip)
+                        break
+                    else:
+                        tz = db.time_zone_by_addr(ip)
+                        break
 
         if tz:
             timezone.activate(tz)

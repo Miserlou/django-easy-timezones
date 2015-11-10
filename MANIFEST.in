@@ -1,2 +1,2 @@
-include README.md LICENSE GeoLiteCity.dat
+include README.md LICENSE GeoLiteCity.dat GeoLiteCityv6.dat
 recursive-include easy_timezones *.py

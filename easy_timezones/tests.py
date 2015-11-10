@@ -7,7 +7,7 @@ from django.test import TestCase, Client
 import os
 
 from .middleware import load_db, load_db_settings, EasyTimezoneMiddleware
-from .utils import get_ip_address_from_request, is_valid_ip
+from .utils import get_ip_address_from_request, is_valid_ip, is_local_ip
 
 class TimezoneTests(TestCase):
     
@@ -62,6 +62,33 @@ class TimezoneTests(TestCase):
         with_s = response.content
 
         self.assertNotEqual(without_s, with_s)
+
+        # Europe/Oslo
+        client = Client(REMOTE_ADDR="2001:700:300:2321::11")
+        response = client.get('/with_tz/')
+        self.assertEqual(response.status_code, 200)
+        with_s = response.content
+
+        self.assertNotEqual(without_s, with_s)
+
+        # Localhost
+        client = Client(REMOTE_ADDR="127.0.0.1")
+        response = client.get('/with_tz/')
+        self.assertEqual(response.status_code, 200)
+        with_s = response.content
+        self.assertEqual(without_s, with_s)
+
+        # Localhost IPv6
+        client = Client(REMOTE_ADDR="0:0:0:0:0:0:0:1")
+        response = client.get('/with_tz/')
+        self.assertEqual(response.status_code, 200)
+        with_s = response.content
+        self.assertEqual(without_s, with_s)
+
+    def test_is_local_ip(self):
+        self.assertTrue(is_local_ip('127.0.0.1'))
+        self.assertTrue(is_local_ip("0:0:0:0:0:0:0:1"))
+        self.assertEqual(is_local_ip("1600 Pennyslvania Avenue"), None)
 
     def test_valid_ips(self):
         # IPv4

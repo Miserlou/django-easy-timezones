@@ -17,7 +17,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-easy-timezones',
-    version='0.5.1',
+    version='0.6.0',
     packages=['easy_timezones'],
     install_requires=required,
     include_package_data=True,
