@@ -83,6 +83,7 @@ class EasyTimezoneMiddleware(object):
 
         if tz:
             timezone.activate(tz)
+            request.session['django_timezone'] = str(tz)
             if getattr(settings, 'AUTH_USER_MODEL', None):
                 detected_timezone.send(sender=get_user_model(), instance=request.user, timezone=tz)
         else:
