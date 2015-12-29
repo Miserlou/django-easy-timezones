@@ -10,7 +10,7 @@ def is_valid_ip(ip_address):
     try:
         ip = ipaddress.ip_address(u'' + ip_address)
         return True
-    except ValueError, e:
+    except ValueError as e:
         return False
 
 def is_local_ip(ip_address):
@@ -19,7 +19,7 @@ def is_local_ip(ip_address):
     try:
         ip = ipaddress.ip_address(u'' + ip_address)
         return ip.is_loopback
-    except ValueError, e:
+    except ValueError as e:
         return None
 
 def get_ip_address_from_request(request):
