@@ -5,7 +5,7 @@ DATABASES = {
     }
 }
 SECRET_KEY = "secret_key_for_testing"
-INSTALLED_APPS = ['django.contrib.sessions', 'easy_timezones']
+INSTALLED_APPS = ['django.contrib.sites', 'django.contrib.sessions', 'easy_timezones']
 MIDDLEWARE_CLASSES = ['django.contrib.sessions.middleware.SessionMiddleware', 'easy_timezones.middleware.EasyTimezoneMiddleware']
 GEOIP_DATABASE = 'GeoLiteCity.dat' 
 ROOT_URLCONF = 'easy_timezones.urls'
