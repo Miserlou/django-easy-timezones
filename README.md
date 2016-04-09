@@ -23,7 +23,7 @@ Quick start
     )
     ```
 
-1. Add EasyTimezoneMiddleware to your MIDDLEWARE_CLASSES 
+1. Add EasyTimezoneMiddleware to your MIDDLEWARE_CLASSES
 
     ```python
     MIDDLEWARE_CLASSES = (
@@ -39,6 +39,15 @@ link](http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz) bec
     GEOIP_DATABASE = '/path/to/your/geoip/database/GeoLiteCity.dat'
     GEOIPV6_DATABASE = '/path/to/your/geoip/database/GeoLiteCityv6.dat'
     ```
+
+1. (Optionally) You can use version 2 of the MaxMind GeoIP cities database (with both IPv4 and IPv6 support - [direct link](https://dev.maxmind.com/geoip/geoip2/geolite2/)):
+
+    ```python
+    GEOIP_VERSION = 2
+    GEOIP_DATABASE = '/path/to/your/geoip/database/GeoLite2-City.mmdb'    
+    ```
+
+    django-easy-timezones will default to using version 1 unless GEOIP_VERSION is set to 2
 
 1. Enable localtime in your templates.
 
@@ -58,7 +67,7 @@ You can also use signals to perform actions based on the timezone detection.
 1. To hook into the Timezone detection event to, say, save it to the request's user somewhere more permanent than a session, do something like this:
 
 	```python
-	from easy_timezones.signals import detected_timezone	
+	from easy_timezones.signals import detected_timezone
 
 	@receiver(detected_timezone, sender=MyUserModel)
 	def process_timezone(sender, instance, timezone, **kwargs):
