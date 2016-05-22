@@ -1,4 +1,4 @@
-coverage==4.0.3
+coverage==4.1
 Django>=1.7
 ipaddress==1.0.16
 pygeoip==0.3.2
