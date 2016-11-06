@@ -1,6 +1,6 @@
 ![Timezones. Yuck.](http://i.imgur.com/Qc2W47H.gif)
 
-django-easy-timezones [![Build Status](https://travis-ci.org/Miserlou/django-easy-timezones.svg)](https://travis-ci.org/Miserlou/django-easy-timezones) [![PyPI](https://img.shields.io/pypi/dm/django-easy-timezones.svg?style=flat)](https://pypi.python.org/pypi/django-easy-timezones/)
+django-easy-timezones [![Build Status](https://travis-ci.org/Miserlou/django-easy-timezones.svg)](https://travis-ci.org/Miserlou/django-easy-timezones)
 =====================
 
 Easy IP-based timezones for Django (>=1.7) based on MaxMind GeoIP, with IPv6 support.
