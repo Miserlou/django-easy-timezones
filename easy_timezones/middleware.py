@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
-from django.utils import timezone
+from django.utils import timezone, deprecation
 import pytz
 import pygeoip
 import os
@@ -47,7 +47,7 @@ def load_db():
     global db_loaded
     db_loaded = True
 
-class EasyTimezoneMiddleware(object):
+class EasyTimezoneMiddleware(deprecation.MiddlewareMixin):
     def process_request(self, request):
         """
         If we can get a valid IP from the request,
