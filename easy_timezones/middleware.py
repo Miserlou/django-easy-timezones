@@ -1,7 +1,8 @@
+import django
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
-from django.utils import timezone, deprecation
+from django.utils import timezone
 import pytz
 import pygeoip
 import os
@@ -47,7 +48,15 @@ def load_db():
     global db_loaded
     db_loaded = True
 
-class EasyTimezoneMiddleware(deprecation.MiddlewareMixin):
+
+if django.VERSION >= (1, 10):
+    from django.utils.deprecation import MiddlewareMixin
+    middleware_base_class = MiddlewareMixin
+else:
+    middleware_base_class = object
+
+
+class EasyTimezoneMiddleware(middleware_base_class):
     def process_request(self, request):
         """
         If we can get a valid IP from the request,
@@ -84,7 +93,7 @@ class EasyTimezoneMiddleware(deprecation.MiddlewareMixin):
         if tz:
             timezone.activate(tz)
             request.session['django_timezone'] = str(tz)
-            if getattr(settings, 'AUTH_USER_MODEL', None):
+            if getattr(settings, 'AUTH_USER_MODEL', None) and getattr(request, 'user', None):
                 detected_timezone.send(sender=get_user_model(), instance=request.user, timezone=tz)
         else:
             timezone.deactivate()
