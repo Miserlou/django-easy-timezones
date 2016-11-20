@@ -3,6 +3,7 @@
 *.pot
 *.pyc
 .coverage
+.tox
 django_easy_timezones.egg-info/
 env/
 dist/
