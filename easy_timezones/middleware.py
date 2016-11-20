@@ -2,7 +2,7 @@ import django
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
-from django.utils import timezone, deprecation
+from django.utils import timezone
 import pytz
 import pygeoip
 import os
