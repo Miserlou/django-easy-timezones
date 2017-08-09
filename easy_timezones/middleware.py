@@ -6,6 +6,7 @@ from django.utils import timezone
 import pytz
 import pygeoip
 import os
+from pathlib import Path
 
 from .signals import detected_timezone
 from .utils import get_ip_address_from_request, is_valid_ip, is_local_ip
@@ -14,8 +15,19 @@ db_loaded = False
 db = None
 db_v6 = None
 
+
+
 def load_db_settings():
-    GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', 'GeoLiteCity.dat')
+    """Loads the db settings. Checks in the django settings for the paths to the GEOIP and
+    GEOIPV6 databases. If not found it uses the default databases"""
+
+    # Default database paths
+    current_dir = Path(__file__).parent
+    GEOIP_DEFAULT_DATABASE = current_dir / 'GeoLiteCity.dat'
+    GEOIPV6_DEFAULT_DATABASE = current_dir / 'GeoLiteCityv6.dat'
+
+    # Loading the settings
+    GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', GEOIP_DEFAULT_DATABASE)
 
     if not GEOIP_DATABASE:
         raise ImproperlyConfigured("GEOIP_DATABASE setting has not been properly defined.")
@@ -23,7 +35,7 @@ def load_db_settings():
     if not os.path.exists(GEOIP_DATABASE):
         raise ImproperlyConfigured("GEOIP_DATABASE setting is defined, but file does not exist.")
 
-    GEOIPV6_DATABASE = getattr(settings, 'GEOIPV6_DATABASE', 'GeoLiteCityv6.dat')
+    GEOIPV6_DATABASE = getattr(settings, 'GEOIPV6_DATABASE', GEOIPV6_DEFAULT_DATABASE)
 
     if not GEOIPV6_DATABASE:
         raise ImproperlyConfigured("GEOIPV6_DATABASE setting has not been properly defined.")
