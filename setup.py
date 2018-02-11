@@ -17,10 +17,14 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-easy-timezones',
-    version='0.8.0',
+    version='0.8.1',
     packages=['easy_timezones'],
     install_requires=required,
     include_package_data=True,
+    package_data = {
+        'easy_timezones': ['*.dat'],
+    },
+
     license='Apache License',
     description='Easy timezones for Django (>=1.7) based on MaxMind GeoIP.',
     long_description=README,
