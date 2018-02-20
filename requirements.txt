@@ -2,4 +2,3 @@ Django>=1.7
 ipaddress>=1.0.16
 pygeoip==0.3.2
 pytz
-wheel>=0.29.0
