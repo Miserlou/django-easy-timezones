@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
-import pytz
 import pygeoip
 import geoip2.database
 import os
@@ -11,9 +10,11 @@ import os
 from .signals import detected_timezone
 from .utils import get_ip_address_from_request, is_valid_ip, is_local_ip
 
+
 db_loaded = False
 db = None
 db_v6 = None
+
 
 def load_db_settings():
     GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', 'GeoLiteCity.dat')
@@ -38,7 +39,9 @@ def load_db_settings():
 
     return (GEOIP_DATABASE, GEOIPV6_DATABASE, GEOIP_VERSION)
 
+
 load_db_settings()
+
 
 def load_db():
     GEOIP_DATABASE, GEOIPV6_DATABASE, GEOIP_VERSION = load_db_settings()
@@ -54,6 +57,38 @@ def load_db():
         db = geoip2.database.Reader(GEOIP_DATABASE)
 
     db_loaded = True
+
+
+def lookup_tz_v1(ip):
+    """
+    Lookup a timezone for the ip using the v1 database.
+
+    :param ip: the ip address, v4 or v6
+    :return:   the timezone
+
+    """
+    if not db_loaded:
+        if ':' in ip:
+            return db_v6.time_zone_by_addr(ip)
+        else:
+            return db.time_zone_by_addr(ip)
+
+
+def lookup_tz_v2(ip):
+    """
+    Lookup a timezone for the ip using the v2 database.
+
+    :param ip: the ip address, v4 or v6
+    :return:   the timezone
+
+    """
+    if not db_loaded:
+        load_db()
+    #
+    # v2 databases support both ipv4 an ipv6
+    #
+    response = db.city(ip)
+    return response.location.time_zone
 
 
 if django.VERSION >= (1, 10):
@@ -93,16 +128,9 @@ class EasyTimezoneMiddleware(middleware_base_class):
             for ip in ip_addrs:
                 if is_valid_ip(ip) and not is_local_ip(ip):
                     if version == 1:
-                        if ':' in ip:
-                            tz = db_v6.time_zone_by_addr(ip)
-                            break
-                        else:
-                            tz = db.time_zone_by_addr(ip)
-                            break
+                        tz = lookup_tz_v1(ip)
                     else:
-                        # Version 2 databases support both IPv4 and IPv6
-                        response = db.city(ip)
-                        tz = response.location.time_zone
+                        tz = lookup_tz_v2(ip)
 
         if tz:
             timezone.activate(tz)
@@ -111,3 +139,4 @@ class EasyTimezoneMiddleware(middleware_base_class):
                 detected_timezone.send(sender=get_user_model(), instance=request.user, timezone=tz)
         else:
             timezone.deactivate()
+
