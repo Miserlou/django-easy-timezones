@@ -10,7 +10,7 @@ from .middleware import load_db, load_db_settings, EasyTimezoneMiddleware
 from .utils import get_ip_address_from_request, is_valid_ip, is_local_ip
 
 class TimezoneTests(TestCase):
-    
+
     def test_basic_addition(self):
         """
         Tests that 1 + 1 always equals 2. (Sanity test.)
@@ -42,48 +42,82 @@ class TimezoneTests(TestCase):
             error_occured = True
         self.assertFalse(error_occured)
 
+        versions = {
+            1: False,
+            2: False,
+            3: True
+        }
+        for version, result in versions.items():
+            settings.GEOIP_VERSION = version
+            error_occured = False
+            try:
+                load_db_settings()
+            except ImproperlyConfigured:
+                error_occured = True
+            self.assertEqual(error_occured, result)
+
     def test_middleware(self):
-        load_db()
-        easy = EasyTimezoneMiddleware()
-        easy.process_request(None)
+        versions = {
+            1: 'GeoLiteCity.dat',
+            2: 'GeoLite2-City.mmdb'
+        }
+
+        for version, database_file in versions.items():
+            settings.GEOIP_VERSION = version
+            settings.GEOIP_DATABASE = os.path.join(os.getcwd(), database_file)
+            load_db_settings()
+            load_db()
+            easy = EasyTimezoneMiddleware()
+            easy.process_request(None)
 
     def test_tags(self):
+        versions = {
+            1: 'GeoLiteCity.dat',
+            2: 'GeoLite2-City.mmdb'
+        }
+                
+        for version, database_file in versions.items():
+            settings.GEOIP_VERSION = version
+            settings.GEOIP_DATABASE = os.path.join(os.getcwd(), database_file)
 
-        # UTC
-        client = Client()
-        response = client.get('/without_tz/')
-        self.assertEqual(response.status_code, 200)
-        without_s = response.content
+            load_db_settings()
+            load_db()
 
-        # Europe/Moscow
-        client = Client(REMOTE_ADDR="93.180.5.26")
-        response = client.get('/with_tz/')
-        self.assertEqual(response.status_code, 200)
-        with_s = response.content
+            # UTC
+            client = Client()
+            response = client.get('/without_tz/')
+            self.assertEqual(response.status_code, 200)
+            without_s = response.content
 
-        self.assertNotEqual(without_s, with_s)
+            # Europe/Moscow
+            client = Client(REMOTE_ADDR="93.180.5.26")
+            response = client.get('/with_tz/')
+            self.assertEqual(response.status_code, 200)
+            with_s = response.content
 
-        # Europe/Oslo
-        client = Client(REMOTE_ADDR="2001:700:300:2321::11")
-        response = client.get('/with_tz/')
-        self.assertEqual(response.status_code, 200)
-        with_s = response.content
+            self.assertNotEqual(without_s, with_s)
 
-        self.assertNotEqual(without_s, with_s)
+            # Europe/Oslo
+            client = Client(REMOTE_ADDR="2001:700:300:2321::11")
+            response = client.get('/with_tz/')
+            self.assertEqual(response.status_code, 200)
+            with_s = response.content
 
-        # Localhost
-        client = Client(REMOTE_ADDR="127.0.0.1")
-        response = client.get('/with_tz/')
-        self.assertEqual(response.status_code, 200)
-        with_s = response.content
-        self.assertEqual(without_s, with_s)
+            self.assertNotEqual(without_s, with_s)
 
-        # Localhost IPv6
-        client = Client(REMOTE_ADDR="0:0:0:0:0:0:0:1")
-        response = client.get('/with_tz/')
-        self.assertEqual(response.status_code, 200)
-        with_s = response.content
-        self.assertEqual(without_s, with_s)
+            # Localhost
+            client = Client(REMOTE_ADDR="127.0.0.1")
+            response = client.get('/with_tz/')
+            self.assertEqual(response.status_code, 200)
+            with_s = response.content
+            self.assertEqual(without_s, with_s)
+
+            # Localhost IPv6
+            client = Client(REMOTE_ADDR="0:0:0:0:0:0:0:1")
+            response = client.get('/with_tz/')
+            self.assertEqual(response.status_code, 200)
+            with_s = response.content
+            self.assertEqual(without_s, with_s)
 
     def test_is_local_ip(self):
         self.assertTrue(is_local_ip('127.0.0.1'))
