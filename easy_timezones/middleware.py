@@ -17,25 +17,35 @@ db_v6 = None
 
 
 def load_db_settings():
-    GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', 'GeoLiteCity.dat')
-
-    if not GEOIP_DATABASE:
-        raise ImproperlyConfigured("GEOIP_DATABASE setting has not been properly defined.")
-
-    if not os.path.exists(GEOIP_DATABASE):
-        raise ImproperlyConfigured("GEOIP_DATABASE setting is defined, but {} does not exist.".format(GEOIP_DATABASE))
-
-    GEOIPV6_DATABASE = getattr(settings, 'GEOIPV6_DATABASE', 'GeoLiteCityv6.dat')
-
-    if not GEOIPV6_DATABASE:
-        raise ImproperlyConfigured("GEOIPV6_DATABASE setting has not been properly defined.")
-
-    if not os.path.exists(GEOIPV6_DATABASE):
-        raise ImproperlyConfigured("GEOIPV6_DATABASE setting is defined, but file does not exist.")
-
     GEOIP_VERSION = getattr(settings, 'GEOIP_VERSION', 1)
     if GEOIP_VERSION not in [1, 2]:
-        raise ImproperlyConfigured("GEOIP_VERSION setting is defined, but only versions 1 and 2 are supported")
+        raise ImproperlyConfigured(
+            "GEOIP_VERSION setting is defined, but only versions 1 and 2 "
+            "are supported")
+
+    GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', 'GeoLiteCity.dat')
+    if not GEOIP_DATABASE:
+        raise ImproperlyConfigured(
+            "GEOIP_DATABASE setting has not been properly defined.")
+    if not os.path.exists(GEOIP_DATABASE):
+        raise ImproperlyConfigured(
+            "GEOIP_DATABASE setting is defined, but {} does not exist.".format(
+                GEOIP_DATABASE)
+        )
+
+    #
+    # Version 2 databases combine both ipv4 and ipv6 data, so only one
+    # database file is used for both
+    #
+    GEOIPV6_DATABASE = getattr(settings, 'GEOIPV6_DATABASE',
+                               'GeoLiteCityv6.dat')
+    if GEOIP_VERSION == 1:
+        if not GEOIPV6_DATABASE:
+            raise ImproperlyConfigured(
+                "GEOIPV6_DATABASE setting has not been properly defined.")
+        if not os.path.exists(GEOIPV6_DATABASE):
+            raise ImproperlyConfigured(
+                "GEOIPV6_DATABASE setting is defined, but file does not exist.")
 
     return (GEOIP_DATABASE, GEOIPV6_DATABASE, GEOIP_VERSION)
 
