@@ -5,6 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import timezone
 import pygeoip
 import geoip2.database
+import geoip2.errors
 import os
 
 from .signals import detected_timezone
@@ -97,7 +98,10 @@ def lookup_tz_v2(ip):
     #
     # v2 databases support both ipv4 an ipv6
     #
-    response = db.city(ip)
+    try:
+        response = db.city(ip)
+    except geoip2.errors.AddressNotFoundError:
+        return None
     return response.location.time_zone
 
 
