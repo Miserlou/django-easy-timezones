@@ -1,5 +1,5 @@
 coverage==4.3
-ipaddress==1.0.21
+ipaddress==1.0.22
 pygeoip==0.3.2
 pytz==2016.10
 wheel==0.29.0
