@@ -33,7 +33,7 @@ Quick start
     ```
 
 1. (Optionally) Add a path to the [MaxMind GeoIP cities databases](http://dev.maxmind.com/geoip/legacy/geolite/) ([direct
-link](http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz) because I'm nice) in your settings file:
+link](https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz) because I'm nice) in your settings file:
 
     ```python
     GEOIP_DATABASE = '/path/to/your/geoip/database/GeoLiteCity.dat'
