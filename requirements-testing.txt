@@ -1,4 +1,4 @@
-coverage==5.0
+coverage==5.3
 ipaddress==1.0.18
 pygeoip==0.3.2
 pytz==2016.10
